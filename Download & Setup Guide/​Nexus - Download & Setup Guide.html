@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nexus Study Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sage:       #8F9E75;
+    --sage-light: #A3B18A;
+    --sage-dim:   rgba(143,158,117,.15);
+    --ink:        #2E3227;
+    --ink-mid:    #4F5A45;
+    --mist:       #EAE5DD;
+    --paper:      #F9F8F3;
+    --muted:      #6B705C;
+    --accent:     #C2A195;
+    --line:       rgba(143,158,117,.22);
+    --card:       rgba(255,255,255,.85);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(249,248,243,.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-logo {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 20px; font-weight: 900; letter-spacing: .3px;
+    color: var(--ink);
+  }
+  .nav-logo span { color: var(--sage); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    font-size: 13px; font-weight: 600; color: var(--ink-mid);
+    text-decoration: none; letter-spacing: .3px;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--sage); }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Signature element: botanical SVG grid pattern in background */
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(143,158,117,.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(143,158,117,.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--sage); font-weight: 500;
+    padding: 6px 16px;
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    margin-bottom: 36px;
+    animation: fadeUp .7s ease both;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--sage);
+    animation: pulse 2s ease infinite;
+  }
+
+  .hero-title {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: clamp(48px, 9vw, 92px);
+    font-weight: 900;
+    line-height: .98;
+    letter-spacing: -2px;
+    color: var(--ink);
+    margin-bottom: 12px;
+    animation: fadeUp .7s .1s ease both;
+  }
+  .hero-title em {
+    font-style: normal;
+    color: var(--sage);
+  }
+
+  .hero-subtitle-line {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: clamp(16px, 2.6vw, 22px);
+    font-weight: 600;
+    font-style: normal;
+    color: var(--muted);
+    margin-bottom: 40px;
+    animation: fadeUp .7s .2s ease both;
+  }
+
+  .hero-desc {
+    max-width: 520px;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--ink-mid);
+    margin-bottom: 52px;
+    animation: fadeUp .7s .3s ease both;
+  }
+
+  .hero-cta {
+    display: inline-block;
+    padding: 15px 40px;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 13px; font-weight: 600; letter-spacing: .5px;
+    text-decoration: none; border-radius: 100px;
+    transition: background .2s, transform .2s;
+    animation: fadeUp .7s .4s ease both;
+  }
+  .hero-cta:hover { background: var(--accent); transform: translateY(-2px); }
+
+  /* Bridge visual */
+  .bridge-visual {
+    margin-top: 80px;
+    display: flex; align-items: center; gap: 0;
+    animation: fadeUp .7s .5s ease both;
+  }
+  .bridge-node {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .bridge-dot {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .bridge-dot.start { background: rgba(143,158,117,.15); }
+  .bridge-dot.end   { background: var(--sage); }
+  .bridge-label {
+    font-size: 11px; font-weight: 500; color: var(--muted);
+    letter-spacing: .5px; text-align: center;
+  }
+  .bridge-line {
+    flex: 1; height: 2px;
+    background: linear-gradient(90deg, rgba(143,158,117,.3), var(--sage), rgba(143,158,117,.3));
+    position: relative; min-width: 80px; max-width: 180px;
+  }
+  .bridge-line::after {
+    content: 'NEXUS';
+    position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 9px; letter-spacing: 3px; color: var(--sage); font-weight: 500;
+  }
+
+  /* ─── SECTION BASE ─── */
+  section { padding: 100px 24px; }
+  .container { max-width: 1080px; margin: 0 auto; }
+  .section-eyebrow {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--sage); margin-bottom: 16px; font-weight: 700;
+  }
+  .section-title {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: clamp(32px, 4.5vw, 48px);
+    font-weight: 900; line-height: 1.1;
+    letter-spacing: -1px; color: var(--ink);
+    margin-bottom: 24px;
+  }
+  .section-title em { font-style: normal; color: var(--sage); }
+
+  /* ─── MEANING ─── */
+  .meaning-section { background: var(--mist); }
+  .meaning-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 64px; align-items: center;
+  }
+  .meaning-text p {
+    font-size: 15px; line-height: 1.9; color: var(--ink-mid);
+    margin-bottom: 16px;
+  }
+  .meaning-visual {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 0;
+    padding: 48px 32px;
+    background: var(--card);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.5);
+    border-radius: 24px;
+    box-shadow: 0 2px 40px rgba(0,0,0,.06);
+  }
+  .mv-block {
+    width: 100%; padding: 20px 24px;
+    border-radius: 14px; text-align: center;
+  }
+  .mv-block.effort {
+    background: rgba(143,158,117,.1);
+    border: 1px solid var(--line);
+  }
+  .mv-block.success {
+    background: var(--sage);
+    color: white;
+  }
+  .mv-block-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase; opacity: .65; margin-bottom: 4px;
+  }
+  .mv-block-text {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 20px; font-weight: 800;
+  }
+  .mv-arrow {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 12px 0; gap: 4px;
+  }
+  .mv-arrow-line {
+    width: 2px; height: 24px;
+    background: linear-gradient(to bottom, rgba(143,158,117,.3), var(--sage));
+  }
+  .mv-arrow-label {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 9px; letter-spacing: 2px; color: var(--sage);
+    font-weight: 500; text-transform: uppercase;
+    padding: 4px 12px;
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    background: white;
+  }
+  .mv-arrow-tip {
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 7px solid var(--sage);
+  }
+
+  /* ─── FEATURES ─── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px; margin-top: 56px;
+  }
+  .feature-card {
+    padding: 24px;
+    background: var(--card);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,.5);
+    box-shadow: 0 2px 12px rgba(0,0,0,.05);
+    transition: transform .25s, box-shadow .25s;
+  }
+  .feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(143,158,117,.15);
+  }
+  .feature-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--sage-dim);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; margin-bottom: 16px;
+  }
+  .feature-name {
+    font-size: 14px; font-weight: 700; color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .feature-desc {
+    font-size: 12.5px; line-height: 1.7; color: var(--muted);
+  }
+
+  /* ─── MESSAGE ─── */
+  .message-section {
+    background: var(--ink);
+    position: relative; overflow: hidden;
+  }
+  .message-section::before {
+    content: '';
+    position: absolute; top: -100px; right: -100px;
+    width: 400px; height: 400px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(143,158,117,.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .message-section .section-eyebrow { color: var(--sage-light); }
+  .message-section .section-title { color: white; }
+  .message-quote {
+    margin-top: 48px;
+    padding: 48px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-left: 3px solid var(--sage);
+    border-radius: 20px;
+  }
+  .message-quote p {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: clamp(16px, 2.2vw, 20px);
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.8;
+    color: rgba(255,255,255,.88);
+    margin-bottom: 32px;
+  }
+  .message-author {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .author-dot {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--sage);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 18px; font-weight: 800; color: white;
+  }
+  .author-info { display: flex; flex-direction: column; gap: 2px; }
+  .author-name { font-size: 14px; font-weight: 600; color: white; }
+  .author-role { font-size: 12px; color: rgba(255,255,255,.4); }
+
+  /* ─── STATS ─── */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--line);
+    border: 1px solid var(--line); border-radius: 20px;
+    overflow: hidden; margin-top: 56px;
+  }
+  .stat-item {
+    background: var(--card); backdrop-filter: blur(8px); padding: 36px 24px; text-align: center;
+  }
+  .stat-num {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 44px; font-weight: 900; color: var(--sage);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 12px; color: var(--muted); margin-top: 8px;
+    font-weight: 600; letter-spacing: .3px;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    padding: 48px 24px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 26px; font-weight: 900;
+    color: var(--ink); margin-bottom: 8px;
+  }
+  .footer-logo span { color: var(--sage); }
+  .footer-tagline {
+    font-size: 12px; color: var(--muted); margin-bottom: 24px;
+    font-style: normal; font-weight: 500;
+  }
+  .footer-copy {
+    font-size: 11px; color: var(--muted); letter-spacing: .3px;
+  }
+
+  /* ─── INSTALL ─── */
+  .install-section { background: var(--mist); }
+  .install-steps {
+    display: flex; flex-direction: column; gap: 0;
+    margin-top: 48px; max-width: 640px; margin-left: auto; margin-right: auto;
+  }
+  .install-step {
+    display: flex; gap: 24px; align-items: flex-start;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .install-step:last-child { border-bottom: none; }
+  .step-num {
+    flex-shrink: 0;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--ink); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 13px; font-weight: 700;
+  }
+  .step-num.highlight { background: var(--sage); }
+  .step-body { flex: 1; padding-top: 8px; }
+  .step-title {
+    font-size: 15px; font-weight: 700; color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .step-desc {
+    font-size: 13px; line-height: 1.75; color: var(--ink-mid);
+  }
+  .step-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 10px;
+    padding: 5px 14px;
+    background: rgba(143,158,117,.12);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    font-size: 11px; font-weight: 600; color: var(--sage);
+    letter-spacing: .3px;
+  }
+  .notice-box {
+    margin-top: 36px;
+    padding: 20px 24px;
+    background: var(--card);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--sage);
+    display: flex; gap: 14px; align-items: flex-start;
+    max-width: 640px; margin-left: auto; margin-right: auto;
+  }
+  .notice-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .notice-text { font-size: 13px; line-height: 1.75; color: var(--ink-mid); }
+  .notice-text strong { color: var(--ink); }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: .5; transform: scale(.7); }
+  }
+
+  .reveal {
+    opacity: 0; transform: translateY(32px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.visible {
+    opacity: 1; transform: translateY(0);
+  }
+
+  /* ─── LANG SWITCH ─── */
+  .lang-switch {
+    display: flex; align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 3px;
+    background: var(--sage-dim);
+    gap: 2px;
+  }
+  .lang-btn {
+    border: none; background: transparent; cursor: pointer;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: .5px;
+    padding: 6px 14px; border-radius: 100px;
+    color: var(--ink-mid);
+    transition: background .2s, color .2s;
+  }
+  .lang-btn.active {
+    background: var(--sage);
+    color: white;
+  }
+
+  /* ─── RTL / ARABIC ─── */
+  html[dir="rtl"] body { font-family: 'Tajawal', sans-serif; }
+  html[dir="rtl"] .hero-title,
+  html[dir="rtl"] .hero-subtitle-line,
+  html[dir="rtl"] .section-title,
+  html[dir="rtl"] .nav-logo,
+  html[dir="rtl"] .footer-logo,
+  html[dir="rtl"] .mv-block-text,
+  html[dir="rtl"] .message-quote p {
+    font-family: 'Tajawal', sans-serif;
+    letter-spacing: 0;
+  }
+  html[dir="rtl"] .hero-title {
+    font-weight: 800;
+    line-height: 1.45;
+    letter-spacing: 0;
+  }
+  html[dir="rtl"] .hero-title em,
+  html[dir="rtl"] .section-title em,
+  html[dir="rtl"] .message-quote p,
+  html[dir="rtl"] .hero-subtitle-line { font-style: normal; }
+  html[dir="rtl"] .bridge-line::after { letter-spacing: 1px; }
+  html[dir="rtl"] .nav-links { gap: 28px; }
+  html[dir="rtl"] .install-step { text-align: right; }
+  html[dir="rtl"] .message-quote { border-left: none; border-right: 3px solid var(--sage); }
+  html[dir="rtl"] .notice-box { border-left: none; border-right: 3px solid var(--sage); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .meaning-grid { grid-template-columns: 1fr; gap: 40px; }
+    .features-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .bridge-line { min-width: 48px; max-width: 80px; }
+    .message-quote { padding: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Nexus<span>.</span></div>
+  <ul class="nav-links">
+    <li><a href="#meaning" data-i18n="nav1">The Name</a></li>
+    <li><a href="#features" data-i18n="nav2">Features</a></li>
+    <li><a href="#install" data-i18n="nav3">How to Install</a></li>
+    <li><a href="#message" data-i18n="nav4">From the Creator</a></li>
+  </ul>
+  <div class="lang-switch">
+    <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" id="btn-ar" onclick="setLang('ar')">عربي</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow" data-i18n="heroEyebrow">Nexus Study Planner · 2026</div>
+
+  <h1 class="hero-title">
+    <span data-i18n="heroTitle1">Your effort.</span><br>
+    <em data-i18n="heroTitle2">Your future.</em>
+  </h1>
+  <p class="hero-subtitle-line" data-i18n="heroSub">One app to connect them.</p>
+
+  <p class="hero-desc" data-i18n="heroDesc">
+    A complete academic companion built for students who refuse to let their hard work go untracked. Plan, study, log, and grow — every day, all in one place.
+  </p>
+
+  <a href="#meaning" class="hero-cta" data-i18n="heroCta1">Discover Nexus</a>
+  <a href="https://drive.google.com/drive/folders/1U4S1ZbXaZLy_53aGDP_fRj3INqQHL5SH" class="hero-cta download-btn" style="background:var(--sage);margin-top:12px" data-i18n="heroCta2">⬇️ Download App</a>
+
+  <!-- Bridge metaphor visual -->
+  <div class="bridge-visual">
+    <div class="bridge-node">
+      <div class="bridge-dot start">📚</div>
+      <div class="bridge-label" data-i18n="bridgeLabel1">Your Effort<br>Today</div>
+    </div>
+    <div class="bridge-line"></div>
+    <div class="bridge-node">
+      <div class="bridge-dot end">🎓</div>
+      <div class="bridge-label" data-i18n="bridgeLabel2">Your Success<br>Tomorrow</div>
+    </div>
+  </div>
+</section>
+
+<!-- MEANING OF THE NAME -->
+<section class="meaning-section" id="meaning">
+  <div class="container">
+    <div class="meaning-grid">
+      <div class="meaning-text reveal">
+        <p class="section-eyebrow" data-i18n="meaningEyebrow">The Name</p>
+        <h2 class="section-title" data-i18n="meaningTitle">What does <em>Nexus</em> mean?</h2>
+        <p data-i18n="meaningP1">
+          In Latin, <strong>Nexus</strong> means <em>the connection</em> — the bond, the bridge, the link between two things. We chose this name with intention.
+        </p>
+        <p data-i18n="meaningP2">
+          This app is your <strong>Nexus</strong>: the bridge between the study session you're putting in right now and the future you're building toward. Every note you take, every hour you log, every goal you check off — it's all a thread in that bridge.
+        </p>
+        <p data-i18n="meaningP3">
+          Nexus doesn't just help you organize your day. It reminds you that your present effort and your future success are not separate — they are <em>directly connected</em>. And you are the one building that connection, one day at a time.
+        </p>
+      </div>
+
+      <div class="meaning-visual reveal">
+        <div class="mv-block effort">
+          <div class="mv-block-label" data-i18n="mvLabel1">Right Now</div>
+          <div class="mv-block-text" data-i18n="mvText1">Your Effort & Dedication</div>
+        </div>
+        <div class="mv-arrow">
+          <div class="mv-arrow-line"></div>
+          <div class="mv-arrow-label">Nexus</div>
+          <div class="mv-arrow-line"></div>
+          <div class="mv-arrow-tip"></div>
+        </div>
+        <div class="mv-block success">
+          <div class="mv-block-label" style="opacity:.7" data-i18n="mvLabel2">Tomorrow</div>
+          <div class="mv-block-text" data-i18n="mvText2">Your Future Success</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-eyebrow" data-i18n="featEyebrow">What's Inside</p>
+      <h2 class="section-title" data-i18n="featTitle">Everything a student<br><em>actually needs.</em></h2>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">📅</div>
+        <div class="feature-name" data-i18n="f1n">Daily Planner</div>
+        <div class="feature-desc" data-i18n="f1d">Plan any past or future date with Goals, Priority Tasks, Study Schedule, and Don't Forget lists — all in one view.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🗒️</div>
+        <div class="feature-name" data-i18n="f2n">Notes Timeline</div>
+        <div class="feature-desc" data-i18n="f2d">Instant live search, date & range filter, tag system, and one-tap export in the NEXUS format.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">📚</div>
+        <div class="feature-name" data-i18n="f3n">Library & Progress</div>
+        <div class="feature-desc" data-i18n="f3d">Subjects → Chapters with editable progress %, chapter notes, and a full analytics tracker to see how far you've come.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">⏱️</div>
+        <div class="feature-name" data-i18n="f4n">Focus Timer</div>
+        <div class="feature-desc" data-i18n="f4d">Pomodoro mode with custom focus & break durations, plus a stopwatch mode. Every session is automatically logged.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">📊</div>
+        <div class="feature-name" data-i18n="f5n">Study Statistics</div>
+        <div class="feature-desc" data-i18n="f5d">Day, week, month, all-time, and custom range breakdowns. Per-subject bars show exactly where your time goes.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-name" data-i18n="f6n">The Vault</div>
+        <div class="feature-desc" data-i18n="f6d">A permanent safe space for your most important notes — with tags, search, date filter, inline editing, and export.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🗓️</div>
+        <div class="feature-name" data-i18n="f7n">Weekly Schedule</div>
+        <div class="feature-desc" data-i18n="f7d">Your class timetable from Saturday to Friday with time, subject, and location — always at a glance.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">💧</div>
+        <div class="feature-name" data-i18n="f8n">Daily Trackers</div>
+        <div class="feature-desc" data-i18n="f8d">Study hours goal and water intake (8 glasses) with visual progress rings so you never forget to take care of yourself.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🎨</div>
+        <div class="feature-name" data-i18n="f9n">15 Themes</div>
+        <div class="feature-desc" data-i18n="f9d">Sage Garden, Dusty Blue, Soft Mauve, Lavender, Muted Olive, Eucalyptus, Midnight, and more — pick the one that matches your mood and study space.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🗂️</div>
+        <div class="feature-name" data-i18n="f10n">My Files</div>
+        <div class="feature-desc" data-i18n="f10d">Organize every upload and link into nested folders, browse the full folder tree at a glance, and move, rename, or copy folders anytime.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">📎</div>
+        <div class="feature-name" data-i18n="f11n">Attachments & Links</div>
+        <div class="feature-desc" data-i18n="f11d">Attach PDFs, text files, and images to notes, chapters, or the Vault, with pinch-to-zoom preview and in-place renaming. Save, open, copy, and share links per item.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">💾</div>
+        <div class="feature-name" data-i18n="f12n">Backup & Restore</div>
+        <div class="feature-desc" data-i18n="f12d">Export a full backup file whenever you like, and import it back anytime to restore all your data.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section style="padding-top:0">
+  <div class="container">
+    <div class="stats-row reveal">
+      <div class="stat-item">
+        <div class="stat-num">5+</div>
+        <div class="stat-label" data-i18n="stat1">App Sections</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">30+</div>
+        <div class="stat-label" data-i18n="stat2">Key Features</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">15</div>
+        <div class="stat-label" data-i18n="stat3">Unique Themes</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">100%</div>
+        <div class="stat-label" data-i18n="stat4">Offline & Private</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO INSTALL -->
+<section class="install-section" id="install">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <p class="section-eyebrow" data-i18n="instEyebrow">Get Started</p>
+      <h2 class="section-title" data-i18n="instTitle">How to install <em>Nexus</em></h2>
+      <p style="font-size:15px;color:var(--ink-mid);line-height:1.8;max-width:520px;margin:0 auto" data-i18n="instDesc">
+        Because Nexus is distributed outside the Play Store, Android will show a security prompt. This is completely normal — just follow these steps.
+      </p>
+    </div>
+
+    <div class="install-steps">
+
+      <div class="install-step reveal">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <div class="step-title" data-i18n="s1t">Download the app file</div>
+          <div class="step-desc" data-i18n="s1d">Download the Nexus <strong>.apk</strong> file from the link shared with you. Once downloaded, tap to open it.</div>
+        </div>
+      </div>
+
+      <div class="install-step reveal">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <div class="step-title" data-i18n="s2t">Google Play Protect appears</div>
+          <div class="step-desc" data-i18n="s2d">
+            Android will show a screen saying <em>"App blocked to protect your device."</em><br/>
+            This is a standard Google security check — it appears for <strong>any</strong> app installed outside the Play Store, not because Nexus is unsafe.
+          </div>
+          <div class="step-badge" data-i18n="s2b">⚠️ This is completely normal</div>
+        </div>
+      </div>
+
+      <div class="install-step reveal">
+        <div class="step-num highlight">03</div>
+        <div class="step-body">
+          <div class="step-title" data-i18n="s3t">Tap "More details"</div>
+          <div class="step-desc" data-i18n="s3d">On the Play Protect screen, tap <strong>More details</strong> at the bottom of the message to expand your options.</div>
+        </div>
+      </div>
+
+      <div class="install-step reveal">
+        <div class="step-num highlight">04</div>
+        <div class="step-body">
+          <div class="step-title" data-i18n="s4t">Tap "Install anyway"</div>
+          <div class="step-desc" data-i18n="s4d">After tapping More details, the <strong>Install anyway</strong> option will appear. Tap it to proceed with the installation.</div>
+        </div>
+      </div>
+
+      <div class="install-step reveal">
+        <div class="step-num">05</div>
+        <div class="step-body">
+          <div class="step-title" data-i18n="s5t">You're all set 🎉</div>
+          <div class="step-desc" data-i18n="s5d">Nexus will install and be ready to use. Open it, pick your theme, and start building your bridge to success.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="notice-box reveal">
+      <div class="notice-icon">🔒</div>
+      <div class="notice-text" data-i18n="notice">
+        <strong>Why does this happen?</strong> Google Play Protect flags apps it hasn't verified through the Play Store. Nexus is a safe, offline app — all your data stays on your device and is never shared with anyone.
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:40px" class="reveal">
+      <a href="https://drive.google.com/drive/folders/1U4S1ZbXaZLy_53aGDP_fRj3INqQHL5SH"
+         class="download-btn"
+         style="display:inline-flex;align-items:center;gap:10px;padding:16px 44px;background:var(--ink);color:white;font-size:14px;font-weight:600;text-decoration:none;border-radius:100px;letter-spacing:.3px;transition:background .2s,transform .2s"
+         onmouseover="this.style.background='var(--accent)';this.style.transform='translateY(-2px)'"
+         onmouseout="this.style.background='var(--ink)';this.style.transform='translateY(0)'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span data-i18n="dlBtn">Download Nexus (.apk)</span>
+      </a>
+      <div style="font-size:11px;color:var(--muted);margin-top:12px;font-family:'Inter',system-ui,sans-serif" data-i18n="dlSub">Android · Free · Offline</div>
+    </div>
+  </div>
+</section>
+
+<!-- MESSAGE FROM CREATOR -->
+<section class="message-section" id="message">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-eyebrow" data-i18n="msgEyebrow">A Note from the Creator</p>
+      <h2 class="section-title" style="color:white;" data-i18n="msgTitle">Built from <em style="color:var(--sage-light)">lived experience.</em></h2>
+    </div>
+
+    <div class="message-quote reveal">
+      <p data-i18n="msgQuote">
+        "Ever since I started my journey in tech, I've had a single, constant dream: to build apps that truly help people and make their daily lives just a little bit easier. As an engineering student, I know the struggle intimately. I know what it feels like to drown in endless tasks, to desperately try to organize scattered notes, and to constantly worry about forgetting something crucial.
+        <br><br>
+        There were so many days where managing the stress of studying felt like a whole separate job. That's exactly why I poured my heart into building this app. I wanted to create a safe, organized space for students just like me — a tool to help you track your progress, clear the mental clutter, and stay on top of your goals.
+        <br><br>
+        I truly hope it brings you the peace of mind and organization it brought me. Please let me know what you think, and if it helps you even a fraction as much as I hope it will, that would mean the world to me. Wish me luck! 🤍"
+      </p>
+      <div class="message-author">
+        <div class="author-dot">J</div>
+        <div class="author-info">
+          <div class="author-name">Jomana Hossen</div>
+          <div class="author-role" data-i18n="msgRole">Developer & Designer · Nexus Study Planner</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Nexus<span>.</span></div>
+  <div class="footer-tagline" data-i18n="footTag">The bridge between your effort and your success.</div>
+  <div class="footer-copy" data-i18n="footCopy">© 2026 Jomana Hossen. All Intellectual Property Rights Reserved.</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Stagger feature cards
+  document.querySelectorAll('.feature-card.reveal').forEach((el, i) => {
+    el.style.transitionDelay = (i * 60) + 'ms';
+  });
+
+  // ─── i18n: EN / ARABIC (FUSHA) ───
+  const translations = {
+    nav1: "الاسم", nav2: "المزايا", nav3: "طريقة التثبيت", nav4: "كلمة المؤسِّسة",
+    heroEyebrow: "Nexus لتنظيم الدراسة · ٢٠٢٦",
+    heroTitle1: "جهدُك اليوم.",
+    heroTitle2: "مستقبلُك غدًا.",
+    heroSub: "تطبيقٌ واحدٌ يصل بينهما.",
+    heroDesc: "رفيقٌ دراسيٌّ متكامل صُمِّم للطلاب الذين يرفضون أن يضيع تعبهم هباءً. خطِّط، وذاكِر، ودوِّن، وتطوَّر — كلَّ يومٍ، في مكانٍ واحد.",
+    heroCta1: "اكتشف Nexus",
+    heroCta2: "⬇️ حمِّل التطبيق",
+    bridgeLabel1: "جهدُك<br>اليوم",
+    bridgeLabel2: "نجاحُك<br>غدًا",
+    meaningEyebrow: "الاسم",
+    meaningTitle: "ما معنى <em>Nexus</em>؟",
+    meaningP1: "في اللاتينية، تعني كلمة <strong>Nexus</strong> <em>الصِّلة</em> — الرابطة، والجسر، والحلقة التي تصل بين شيئين. وقد اخترنا هذا الاسم عن قصدٍ وتدبُّر.",
+    meaningP2: "هذا التطبيق هو Nexus الخاص بك: الجسر الذي يصل بين جلسة المذاكرة التي تخوضها الآن وبين المستقبل الذي تبنيه. فكلُّ ملاحظةٍ تدوِّنها، وكلُّ ساعةٍ تسجِّلها، وكلُّ هدفٍ تحقِّقه، هو خيطٌ في ذلك الجسر.",
+    meaningP3: "لا يكتفي Nexus بمساعدتك على تنظيم يومك، بل يذكِّرك بأنَّ جهدك الحاضر ونجاحك المستقبلي ليسا أمرين منفصلين، بل هما <em>مرتبطان ارتباطًا مباشرًا</em>. وأنت من يبني هذه الصِّلة، يومًا بعد يوم.",
+    mvLabel1: "الآن",
+    mvText1: "جهدُك وتفانيك",
+    mvLabel2: "غدًا",
+    mvText2: "نجاحُك المستقبلي",
+    featEyebrow: "ماذا يحتوي؟",
+    featTitle: "كلُّ ما يحتاجه الطالب<br><em>فعلًا.</em>",
+    f1n: "المخطِّط اليومي",
+    f1d: "خطِّط لأيِّ يومٍ ماضٍ أو قادم بالأهداف، والمهام ذات الأولوية، والجدول الدراسي، وقوائم «لا تنسَ» — كلُّ ذلك في واجهةٍ واحدة.",
+    f2n: "الخط الزمني للملاحظات",
+    f2d: "بحثٌ فوريٌّ لحظيٌّ، وتصفية بالتاريخ والمدى، ونظام وسوم، وتصديرٌ بنقرةٍ واحدة بصيغة NEXUS.",
+    f3n: "المكتبة والتقدُّم",
+    f3d: "موادُّ دراسية ← فصولٌ بنسبة تقدُّمٍ قابلة للتعديل، وملاحظات لكلِّ فصل، ومتعقِّب تحليلاتٍ كاملٌ لترى مدى ما أنجزته.",
+    f4n: "مؤقِّت التركيز",
+    f4d: "وضع بومودورو بمدد تركيزٍ واستراحةٍ قابلة للتخصيص، إضافةً إلى وضع ساعة الإيقاف. وتُسجَّل كلُّ جلسةٍ تلقائيًّا.",
+    f5n: "إحصاءات المذاكرة",
+    f5d: "تفصيلٌ يوميٌّ وأسبوعيٌّ وشهريٌّ، ولكلِّ الأوقات، ولمدًى مخصَّص. وتُظهر الأشرطة لكلِّ مادةٍ أين يذهب وقتك بالضبط.",
+    f6n: "الخِزانة",
+    f6d: "مساحةٌ آمنةٌ دائمة لأهمِّ ملاحظاتك — مع وسومٍ، وبحث، وتصفيةٍ بالتاريخ، وتحريرٍ مباشر، وتصدير.",
+    f7n: "الجدول الأسبوعي",
+    f7d: "جدول حصصك من السبت إلى الجمعة بالوقت والمادة والمكان — في متناول نظرةٍ واحدة دائمًا.",
+    f8n: "المتعقِّبات اليومية",
+    f8d: "هدف ساعات المذاكرة، وشرب الماء (٨ أكواب) بحلقات تقدُّمٍ مرئية حتى لا تنسى الاعتناء بنفسك أبدًا.",
+    f9n: "١٥ سمة تصميمية",
+    f9d: "حديقة المريمية، أزرق ترابي، موف ناعم، لافندر، زيتوني هادئ، أوكالبتوس، منتصف الليل، والمزيد — اختر ما يناسب مزاجك ومساحة دراستك.",
+    f10n: "ملفاتي",
+    f10d: "نظِّم كلَّ ملف مرفوع ورابط في مجلدات متداخلة، وتصفَّح شجرة المجلدات كاملةً بنظرةٍ واحدة، وانقل المجلدات أو أعد تسميتها أو انسخها في أيِّ وقت.",
+    f11n: "المرفقات والروابط",
+    f11d: "أرفق ملفات PDF وTXT والصور بالملاحظات والفصول أو الخزنة، مع معاينةٍ بالتكبير بإصبعين وإعادة تسميةٍ مباشرة. احفظ الروابط وافتحها وانسخها وشاركها لكلِّ عنصر.",
+    f12n: "النسخ الاحتياطي والاستعادة",
+    f12d: "صدِّر ملف نسخةٍ احتياطية كاملة متى شئت، واستورده مرةً أخرى في أيِّ وقت لاستعادة كلِّ بياناتك.",
+    stat1: "أقسامٌ في التطبيق",
+    stat2: "ميزةٌ رئيسية",
+    stat3: "سمةٌ تصميمية فريدة",
+    stat4: "بلا اتصالٍ وخصوصيةٌ تامة",
+    instEyebrow: "ابدأ الآن",
+    instTitle: "كيف تُثبِّت <em>Nexus</em>",
+    instDesc: "بما أنَّ Nexus يُوزَّع خارج متجر Play، فسيُظهر نظام أندرويد تنبيهًا أمنيًّا. وهذا أمرٌ طبيعيٌّ تمامًا — اتَّبع هذه الخطوات فحسب.",
+    s1t: "نزِّل ملف التطبيق",
+    s1d: "نزِّل ملف Nexus بصيغة <strong>.apk</strong> من الرابط الذي وُصِل إليك، ثم انقر عليه لفتحه بعد التنزيل.",
+    s2t: "ظهور تنبيه Google Play Protect",
+    s2d: "سيُظهر أندرويد شاشةً تقول: <em>«تمّ حظر التطبيق لحماية جهازك»</em>.<br/>وهذا فحصٌ أمنيٌّ معياريٌّ من غوغل يظهر مع <strong>أيِّ</strong> تطبيقٍ يُثبَّت خارج متجر Play، لا لأنَّ Nexus غير آمن.",
+    s2b: "⚠️ هذا أمرٌ طبيعيٌّ تمامًا",
+    s3t: "انقر على «مزيد من التفاصيل»",
+    s3d: "في شاشة Play Protect، انقر على <strong>مزيد من التفاصيل</strong> أسفل الرسالة لتوسيع خياراتك.",
+    s4t: "انقر على «التثبيت رغم ذلك»",
+    s4d: "بعد النقر على «مزيد من التفاصيل»، سيظهر خيار <strong>التثبيت رغم ذلك</strong>. انقر عليه للمتابعة بالتثبيت.",
+    s5t: "أصبح كلُّ شيءٍ جاهزًا 🎉",
+    s5d: "سيُثبَّت Nexus ويصبح جاهزًا للاستخدام. افتحه، واختر سمتك، وابدأ في بناء جسرك نحو النجاح.",
+    notice: "<strong>لماذا يحدث هذا؟</strong> يُحذِّر Google Play Protect من التطبيقات التي لم يُتحقَّق منها عبر متجر Play. و Nexus تطبيقٌ آمنٌ يعمل بلا اتصال — تبقى جميع بياناتك على جهازك ولا تُشارَك مع أيِّ أحد.",
+    dlBtn: "حمِّل Nexus (.apk)",
+    dlSub: "أندرويد · مجانًا · بلا اتصال",
+    msgEyebrow: "كلمةٌ من المؤسِّسة",
+    msgTitle: "بُني من <em style=\"color:var(--sage-light)\">تجربةٍ حقيقية.</em>",
+    msgQuote: "«منذ أن بدأتُ مسيرتي في عالم التقنية، راودني حلمٌ واحدٌ ثابت: أن أبني تطبيقاتٍ تُعين الناس فعلًا وتُيسِّر حياتهم اليومية ولو قليلًا. وبصفتي طالبةَ هندسة، أعرف هذا الكفاح عن قُرب. أعرف معنى أن تغرق في مهامَّ لا تنتهي، وأن تحاول يائسًا تنظيم ملاحظاتٍ متناثرة، وأن تظلَّ قلقًا من نسيان أمرٍ مهم.<br><br>كانت هناك أيامٌ كثيرة شعرتُ فيها بأنَّ إدارة ضغط الدراسة وظيفةٌ مستقلَّةٌ بذاتها. ولهذا السبب تحديدًا، وضعتُ قلبي في بناء هذا التطبيق. أردتُ أن أصنع مساحةً آمنةً منظَّمة لطلابٍ مثلي — أداةً تساعدك على تتبُّع تقدُّمك، وتفريغ ذهنك من الفوضى، والبقاء على مسار أهدافك.<br><br>آمل حقًّا أن يمنحك هذا التطبيق راحة البال والتنظيم اللذين منحني إيَّاهما. شاركوني آراءكم، وإن أعانكم ولو بجزءٍ يسيرٍ مما أتمنَّاه، فسيعني ذلك لي الكثير. تمنَّوا لي التوفيق! 🤍»",
+    msgRole: "مطوِّرة ومصمِّمة · مخطِّط Nexus الدراسي",
+    footTag: "الجسر الذي يصل بين جهدك ونجاحك.",
+    footCopy: "© ٢٠٢٦ جُمانة حسين. جميع حقوق الملكية الفكرية محفوظة."
+  };
+
+  const originals = {};
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    originals[el.getAttribute('data-i18n') + '__' + Array.from(el.parentNode.children).indexOf(el)] = el.innerHTML;
+  });
+  // store original HTML per element directly for reliability
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.dataset.original = el.innerHTML;
+  });
+
+  const LINK_AR = 'https://drive.google.com/drive/folders/19lRjAV4oVRMzo9rdzsrcdf2FjMiA8IRr';
+  const LINK_EN = 'https://drive.google.com/drive/folders/1U4S1ZbXaZLy_53aGDP_fRj3INqQHL5SH';
+
+  function setLang(lang) {
+    const html = document.documentElement;
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+
+    if (lang === 'ar') {
+      html.setAttribute('lang', 'ar');
+      html.setAttribute('dir', 'rtl');
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[key]) el.innerHTML = translations[key];
+      });
+      document.querySelectorAll('.download-btn').forEach(a => a.href = LINK_AR);
+    } else {
+      html.setAttribute('lang', 'en');
+      html.setAttribute('dir', 'ltr');
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.innerHTML = el.dataset.original;
+      });
+      document.querySelectorAll('.download-btn').forEach(a => a.href = LINK_EN);
+    }
+    try { localStorage.setItem('nexus-lang', lang); } catch(e) {}
+  }
+
+  // Restore saved preference
+  (function initLang() {
+    let saved = 'en';
+    try { saved = localStorage.getItem('nexus-lang') || 'en'; } catch(e) {}
+    if (saved === 'ar') setLang('ar');
+  })();
+</script>
+</body>
+</html>
